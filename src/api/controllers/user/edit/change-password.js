@@ -1,7 +1,7 @@
-import { User } from '../../../../models/index.js';
-import { validateChangePassword } from '../../../validators/user.validator.js';
-import { errorHelper, logger, getText } from '../../../../utils/index.js';
 import bcrypt from 'bcryptjs';
+import { User } from '../../../../models/index.js';
+import { errorHelper, getText, logger } from '../../../../utils/index.js';
+import { validateChangePassword } from '../../../validators/user.validator.js';
 const { hash, compare } = bcrypt;
 
 export default async (req, res) => {

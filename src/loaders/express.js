@@ -1,14 +1,14 @@
-import express from 'express'
-import cors from 'cors';
+import bodyParser from 'body-parser';
 import compression from 'compression';
-import morgan from 'morgan';
+import cors from 'cors';
+import express from 'express';
 import helmet from 'helmet';
-import { prefix } from './../config/index.js';
-import routes from './../api/routes/index.js';
-import { logger } from '../utils/index.js';
+import morgan from 'morgan';
 import { rateLimiter } from '../api/middlewares/index.js';
 import { jwtSecretKey } from '../config/index.js';
-import bodyParser from 'body-parser';
+import { logger } from '../utils/index.js';
+import routes from './../api/routes/index.js';
+import { prefix } from './../config/index.js';
 
 export default (app) => {
   process.on('uncaughtException', async (error) => {

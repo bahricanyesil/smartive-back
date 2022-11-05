@@ -1,7 +1,7 @@
-import { User, Token } from '../../../../models/index.js';
-import { validateLogin } from '../../../validators/user.validator.js';
-import { errorHelper, getText, logger, signAccessToken, signRefreshToken } from '../../../../utils/index.js';
 import bcrypt from 'bcryptjs';
+import { User } from '../../../../models/index.js';
+import { errorHelper, getText, logger, signAccessToken } from '../../../../utils/index.js';
+import { validateLogin } from '../../../validators/user.validator.js';
 const { compare } = bcrypt;
 
 export default async (req, res) => {
@@ -16,7 +16,7 @@ export default async (req, res) => {
     return res.status(400).json(errorHelper(code, req, error.details[0].message));
   }
 
-  const user = await User.findOne({ email: req.body.email, isActivated: true, isVerified: true }).select('+password')
+  const user = await User.findOne({ email: req.body.email, isActivated: true}).select('+password')
     .catch((err) => {
       return res.status(500).json(errorHelper('00041', req, err.message));
     });
@@ -27,34 +27,15 @@ export default async (req, res) => {
   if (!user.isActivated)
     return res.status(400).json(errorHelper('00043', req));
 
-  if (!user.isVerified)
-    return res.status(400).json(errorHelper('00044', req));
-
   const match = await compare(req.body.password, user.password);
   if (!match)
     return res.status(400).json(errorHelper('00045', req));
 
   const accessToken = signAccessToken(user._id);
-  const refreshToken = signRefreshToken(user._id);
-  //NOTE: 604800000 ms is equal to 7 days. So, the expiry date of the token is 7 days after.
-  await Token.updateOne(
-    { userId: user._id },
-    {
-      $set: {
-        refreshToken: refreshToken,
-        status: true,
-        expiresIn: Date.now() + 604800000,
-        createdAt: Date.now()
-      },
-    }
-  ).catch((err) => {
-    return res.status(500).json(errorHelper('00046', req, err.message));
-  });
-
   logger('00047', user._id, getText('en', '00047'), 'Info', req);
   return res.status(200).json({
     resultMessage: { en: getText('en', '00047'), tr: getText('tr', '00047') },
-    resultCode: '00047', user, accessToken, refreshToken
+    resultCode: '00047', user, accessToken
   });
 };
 
@@ -92,8 +73,6 @@ export default async (req, res) => {
  *                          user:
  *                              $ref: '#/components/schemas/User'
  *                          accessToken:
- *                              type: string
- *                          refreshToken:
  *                              type: string
  *        "400":
  *          description: Please provide all the required fields!

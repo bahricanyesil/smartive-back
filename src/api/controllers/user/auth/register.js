@@ -1,10 +1,10 @@
-import { User } from '../../../../models/index.js';
-import { validateRegister } from '../../../validators/user.validator.js';
-import { errorHelper, generateRandomCode, sendCodeToEmail, logger, getText, turkishToEnglish, signConfirmCodeToken } from '../../../../utils/index.js';
-import ipHelper from '../../../../utils/helpers/ip-helper.js';
 import bcrypt from 'bcryptjs';
-const { hash } = bcrypt;
 import geoip from 'geoip-lite';
+import { User } from '../../../../models/index.js';
+import ipHelper from '../../../../utils/helpers/ip-helper.js';
+import { errorHelper, generateRandomCode, getText, logger, turkishToEnglish } from '../../../../utils/index.js';
+import { validateRegister } from '../../../validators/user.validator.js';
+const { hash } = bcrypt;
 const { lookup } = geoip;
 
 export default async (req, res) => {
@@ -22,16 +22,13 @@ export default async (req, res) => {
   }
 
   const exists = await User.exists({ email: req.body.email })
-  .catch((err) => {
-    return res.status(500).json(errorHelper('00031', req, err.message));
-  });
+    .catch((err) => {
+      return res.status(500).json(errorHelper('00031', req, err.message));
+    });
 
   if (exists) return res.status(409).json(errorHelper('00032', req));
 
   const hashed = await hash(req.body.password, 10);
-
-  const emailCode = generateRandomCode(4);
-  await sendCodeToEmail(req.body.email, req.body.name, emailCode, req.body.language, 'register', req, res);
 
   let username = '';
   let tempName = '';
@@ -56,11 +53,6 @@ export default async (req, res) => {
     password: hashed,
     name: name,
     username: username,
-    language: req.body.language,
-    platform: req.body.platform,
-    isVerified: false,
-    countryCode: geo == null ? 'US' : geo.country,
-    timezone: req.body.timezone,
     lastLogin: Date.now()
   });
 
@@ -70,12 +62,13 @@ export default async (req, res) => {
 
   user.password = null;
 
-  const confirmCodeToken = signConfirmCodeToken(user._id, emailCode);
 
   logger('00035', user._id, getText('en', '00035'), 'Info', req);
   return res.status(200).json({
     resultMessage: { en: getText('en', '00035'), tr: getText('tr', '00035') },
-    resultCode: '00035', user, confirmToken: confirmCodeToken
+    resultCode: '00035',
+    user: user.toJSON(),
+    accessToken: accessToken,
   });
 };
 
@@ -124,7 +117,7 @@ export default async (req, res) => {
  *                              $ref: '#/components/schemas/ResultCode'
  *                          user:
  *                              $ref: '#/components/schemas/User'
- *                          confirmToken:
+ *                          accessToken:
  *                              type: string
  *        "400":
  *          description: Please provide all the required fields!

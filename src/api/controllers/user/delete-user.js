@@ -1,4 +1,4 @@
-import { User, Token } from '../../../models/index.js';
+import { User } from '../../../models/index.js';
 import { generateRandomCode, errorHelper, getText, logger } from '../../../utils/index.js';
 import bcrypt from 'bcryptjs';
 const { hash } = bcrypt;
@@ -14,10 +14,6 @@ export default async (req, res) => {
     }
   }).catch(err => {
     return res.status(500).json(errorHelper('00090', req, err.message));
-  });
-
-  await Token.deleteOne({ userId: req.user._id }).catch(err => {
-    return res.status(500).json(errorHelper('00091', req, err.message));
   });
 
   logger('00092', req.user._id, getText('en', '00092'), 'Info', req);
