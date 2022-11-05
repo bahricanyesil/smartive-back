@@ -5,7 +5,7 @@ import { auth } from '../middlewares/index.js';
 const router = Router();
 
 // AUTH
-router.post('/signup', register);
+router.post('/register', register);
 router.post('/login', login);
 
 // EDIT
