@@ -1,11 +1,8 @@
 import bcrypt from 'bcryptjs';
-import geoip from 'geoip-lite';
 import { User } from '../../../../models/index.js';
-import ipHelper from '../../../../utils/helpers/ip-helper.js';
 import { errorHelper, generateRandomCode, getText, logger, turkishToEnglish } from '../../../../utils/index.js';
 import { validateRegister } from '../../../validators/user.validator.js';
 const { hash } = bcrypt;
-const { lookup } = geoip;
 
 export default async (req, res) => {
   const { error } = validateRegister(req.body);
@@ -45,8 +42,6 @@ export default async (req, res) => {
       return res.status(500).json(errorHelper('00033', req, err.message));
     });
   } while (existsUsername);
-
-  const geo = lookup(ipHelper(req));
 
   let user = new User({
     email: req.body.email,
