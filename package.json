@@ -30,8 +30,8 @@
   },
   "scripts": {
     "start": "node src/app.js",
+    "build": "netlify-lambda build express",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo 'build script executed'" 
   },
   "repository": {
     "type": "git",
