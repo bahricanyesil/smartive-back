@@ -4,7 +4,6 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { rateLimiter } from '../api/middlewares/index.js';
 import routes from '../api/routes/index.js';
 import { jwtSecretKey, prefix } from '../config/index.js';
 import { logger } from '../utils/index.js';
@@ -36,7 +35,6 @@ export default (app) => {
   app.disable('x-powered-by');
   app.disable('etag');
 
-  app.use(rateLimiter);
   app.use(prefix, routes);
 
   app.get('/', (_req, res) => {
