@@ -5,10 +5,9 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimiter } from '../api/middlewares/index.js';
-import { jwtSecretKey } from '../config/index.js';
+import routes from '../api/routes/index.js';
+import { jwtSecretKey, prefix } from '../config/index.js';
 import { logger } from '../utils/index.js';
-import routes from './../api/routes/index.js';
-import { prefix } from './../config/index.js';
 
 export default (app) => {
   process.on('uncaughtException', async (error) => {
