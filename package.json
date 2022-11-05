@@ -23,7 +23,8 @@
     "rate-limiter-flexible": "^2.2.1",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "netlify-lambda": "^1.6.3"
   },
   "devDependencies": {
     "xxxxx": "^1.0.3"
