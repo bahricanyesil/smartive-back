@@ -56,7 +56,7 @@ export default async (req, res) => {
   });
 
   user.password = null;
-
+  const accessToken = signAccessToken(user.id);
 
   logger('00035', user._id, getText('en', '00035'), 'Info', req);
   return res.status(200).json({

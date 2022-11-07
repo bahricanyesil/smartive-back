@@ -31,7 +31,7 @@ export default async (req, res) => {
   if (!match)
     return res.status(400).json(errorHelper('00045', req));
 
-  const accessToken = signAccessToken(user._id);
+  const accessToken = signAccessToken(user.id);
   logger('00047', user._id, getText('en', '00047'), 'Info', req);
   return res.status(200).json({
     resultMessage: { en: getText('en', '00047'), tr: getText('tr', '00047') },
